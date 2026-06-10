@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internship Management System</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    padding:20px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+    color:#333;
+}
+
+.card{
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+}
+
+form{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+
+input, select{
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+button{
+    padding:10px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    color:white;
+}
+
+.add-btn{
+    background:#28a745;
+}
+
+.edit-btn{
+    background:#007bff;
+}
+
+.delete-btn{
+    background:#dc3545;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+table th{
+    background:#343a40;
+    color:white;
+}
+
+table th, table td{
+    padding:12px;
+    border:1px solid #ddd;
+    text-align:left;
+}
+
+.action-buttons{
+    display:flex;
+    gap:8px;
+}
+
+@media(max-width:768px){
+    table{
+        display:block;
+        overflow-x:auto;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Internship Management System</h1>
+
+    <div class="card">
+        <h2>Add Intern Details</h2>
+        <br>
+
+        <form id="internForm">
+            <input type="text" id="name" placeholder="Intern Name" required>
+
+            <input type="email" id="email" placeholder="Email Address" required>
+
+            <input type="text" id="college" placeholder="College Name" required>
+
+            <input type="text" id="domain" placeholder="Internship Domain" required>
+
+            <select id="status" required>
+                <option value="">Select Status</option>
+                <option>Active</option>
+                <option>Completed</option>
+                <option>Pending</option>
+            </select>
+
+            <button type="submit" class="add-btn">
+                Save Intern
+            </button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Intern Records</h2>
+        <br>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>College</th>
+                    <th>Domain</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="internTable"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+
+let interns = [];
+let editIndex = -1;
+
+document.getElementById("internForm")
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let college = document.getElementById("college").value;
+    let domain = document.getElementById("domain").value;
+    let status = document.getElementById("status").value;
+
+    if(editIndex === -1){
+
+        interns.push({
+            id: interns.length + 1,
+            name,
+            email,
+            college,
+            domain,
+            status
+        });
+
+    } else {
+
+        interns[editIndex].name = name;
+        interns[editIndex].email = email;
+        interns[editIndex].college = college;
+        interns[editIndex].domain = domain;
+        interns[editIndex].status = status;
+
+        editIndex = -1;
+    }
+
+    this.reset();
+    displayInterns();
+});
+
+function displayInterns(){
+
+    let table = document.getElementById("internTable");
+    table.innerHTML = "";
+
+    interns.forEach((intern,index)=>{
+
+        table.innerHTML += `
+        <tr>
+            <td>${intern.id}</td>
+            <td>${intern.name}</td>
+            <td>${intern.email}</td>
+            <td>${intern.college}</td>
+            <td>${intern.domain}</td>
+            <td>${intern.status}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="edit-btn"
+                    onclick="editIntern(${index})">
+                    Edit
+                    </button>
+
+                    <button class="delete-btn"
+                    onclick="deleteIntern(${index})">
+                    Delete
+                    </button>
+                </div>
+            </td>
+        </tr>
+        `;
+    });
+}
+
+function editIntern(index){
+
+    document.getElementById("name").value =
+    interns[index].name;
+
+    document.getElementById("email").value =
+    interns[index].email;
+
+    document.getElementById("college").value =
+    interns[index].college;
+
+    document.getElementById("domain").value =
+    interns[index].domain;
+
+    document.getElementById("status").value =
+    interns[index].status;
+
+    editIndex = index;
+}
+
+function deleteIntern(index){
+
+    if(confirm("Delete this intern record?")){
+
+        interns.splice(index,1);
+
+        interns.forEach((intern,i)=>{
+            intern.id = i + 1;
+        });
+
+        displayInterns();
+    }
+}
+
+displayInterns();
+
+</script>
+
+</body>
+</html>
